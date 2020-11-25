@@ -168,7 +168,7 @@ class Model(object):
         self.model = Obj(fileName)
 
         self.createVertBuffer()
-
+        
         self.texture_surface = pygame.image.load(textureName)
         self.texture_data = pygame.image.tostring(self.texture_surface,"RGB",1)
         self.texture = glGenTextures(1)
@@ -251,7 +251,7 @@ class Renderer(object):
         glViewport(0, 0, self.width, self.height)
 
         self.temp = 0
-
+        self.cont=0 
         self.modelList = []
 
         self.activeModelIndex=0
@@ -297,7 +297,7 @@ class Renderer(object):
 
         glClearColor(0.2, 0.2, 0.2, 1)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT )
-
+        cont=0
 
         if self.active_shader:
             glUniformMatrix4fv(glGetUniformLocation(self.active_shader, "view"),
@@ -311,7 +311,8 @@ class Renderer(object):
 
             glUniform4f(glGetUniformLocation(self.active_shader, "color"), 
                         1, 1, 1, 1)
-
+            
+            glUniform1f(glGetUniformLocation(self.active_shader, "time"), self.cont)
 
         #for model in self.modelList:
 

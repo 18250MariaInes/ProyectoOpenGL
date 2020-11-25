@@ -18,7 +18,10 @@ deltaTime = 0.0
 pygame.init()
 clock = pygame.time.Clock()
 screenSize = (960, 540)
-screen = pygame.display.set_mode(screenSize, DOUBLEBUF | OPENGL)
+screen = pygame.display.set_mode(screenSize, OPENGLBLIT | DOUBLEBUF | OPENGL)
+
+#backgroung images
+bgspace=pygame.image.load('spaceIm.jpg')
 
 # Inicializacion de nuestro Renderer en OpenGL
 r = Renderer(screen)
@@ -52,18 +55,42 @@ r.modelList.append(nave)
 #r.modelList.append(Model('marsRobot.obj', 'metal.bmp'))"""
 r.modelList.append(fox)
 
+#play a step sound when moving
+def play_step():
+    pygame.mixer.music.load('mariostep.mp3')
+    pygame.mixer.music.play(0)
 
 isPlaying = True
 while isPlaying:
+
 
     # Para revisar si una tecla esta presionada
     keys = pygame.key.get_pressed()
 
     # Move cam
     if keys[K_RIGHT]:
-        r.camPosition.x += 1 * deltaTime
+        r.camPosition.x += 100 * deltaTime
+        """r.camPosition.z -= 50 * deltaTime
+        r.camRotation.y += 50 * deltaTime"""
     if keys[K_LEFT]:
-        r.camPosition.x -= 1 * deltaTime
+        r.camPosition.x -= 100 * deltaTime
+        """r.camPosition.z -= 50 * deltaTime
+        r.camRotation.y -= 50 * deltaTime"""
+
+    if keys[K_1]:
+        play_step()
+        r.setShaders(shaders.vertex_shader, shaders.siren_shader)
+    if keys[K_2]:
+        play_step()
+        r.setShaders(shaders.vertex_shader, shaders.rainbow_shader)
+    if keys[K_3]:
+        play_step()
+        r.setShaders(shaders.vertex_shader, shaders.fragment_shader)
+    if keys[K_4]:
+        play_step()
+        r.setShaders(shaders.dance_shader, shaders.siren_shader)
+    """if keys[K_5]:
+        r.setShaders(shaders.vertex_shader, shaders.wavy_shader)"""
     
     
     """if keys[K_w]:
@@ -77,20 +104,25 @@ while isPlaying:
             isPlaying = False
         elif ev.type == pygame.KEYDOWN:
             # para revisar en el momento que se presiona una tecla
-            if ev.key == pygame.K_1:
+            if ev.key == pygame.K_9:
                 r.filledMode()
-            elif ev.key == pygame.K_2:
+            elif ev.key == pygame.K_8:
                 r.wireframeMode()
             elif ev.key == pygame.K_ESCAPE:
                 isPlaying = False
             elif ev.key == pygame.K_SPACE:
-                r.activeModelIndex = (r.activeModelIndex+1)%len(r.modelList)
+                r.activeModelIndex = (r.activeModelIndex+1) % len( r.modelList )
         
         if ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
             if ev.button == 4:
-               r.camPosition.z -= 1 * deltaTime
+                if r.camPosition.z>=-44:
+                    r.camPosition.z -= 100 * deltaTime
+               #print(r.camPosition.z)
             if ev.button == 5:
-               r.camPosition.z += 1 * deltaTime
+                if r.camPosition.z<=44:
+                    r.camPosition.z += 100 * deltaTime
+               #print(r.camPosition.z)
+
 
     # Main Renderer Loop
     r.render()
@@ -98,6 +130,7 @@ while isPlaying:
     pygame.display.flip()
     clock.tick(60)
     deltaTime = clock.get_time() / 1000
+    r.cont=r.cont+1
 
 
 pygame.quit()
