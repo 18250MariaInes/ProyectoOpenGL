@@ -209,16 +209,17 @@ class Model(object):
                 buffer.append(self.model.texcoords[face[i][1] - 1][1])
 
         self.vertBuffer = np.array( buffer, dtype=np.float32)
+        self.VBO = glGenBuffers(1) #Vertex Buffer Object
+        self.VAO = glGenVertexArrays(1) #Vertex Array Object
 
 
     def renderInScene(self):
+#aqui empecé a mover
+        
 
-        VBO = glGenBuffers(1) #Vertex Buffer Object
-        VAO = glGenVertexArrays(1) #Vertex Array Object
+        glBindVertexArray(self.VAO)
 
-        glBindVertexArray(VAO)
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO)
+        glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
         glBufferData(GL_ARRAY_BUFFER, self.vertBuffer.nbytes, self.vertBuffer, GL_STATIC_DRAW)
 
         # Atributo de posicion de vertices
@@ -252,6 +253,7 @@ class Renderer(object):
 
         self.temp = 0
         self.cont=0 
+        self.expl=0
         self.modelList = []
 
         self.activeModelIndex=0
@@ -313,7 +315,7 @@ class Renderer(object):
                         1, 1, 1, 1)
             
             glUniform1f(glGetUniformLocation(self.active_shader, "time"), self.cont)
-
+            glUniform1f(glGetUniformLocation(self.active_shader, "expl"), self.expl)
         #for model in self.modelList:
 
             if self.active_shader:

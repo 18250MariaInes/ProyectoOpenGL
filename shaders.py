@@ -64,6 +64,35 @@ void main()
 }
 """
 
+exp_shader = """
+#version 460
+layout (location = 0) in vec4 pos;
+layout (location = 1) in vec4 normal;
+layout (location = 2) in vec2 texcoords;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+uniform vec4 color;
+uniform vec4 light;
+uniform float expl;
+
+out vec4 vertexColor;
+out vec2 vertexTexcoords;
+out vec4 fnormal;
+
+void main()
+{
+    vec4 newPos= (pos + (model * normal) * expl/10)/100;
+    float intensity = dot(model * normal, normalize(light - pos));
+    fnormal=normal;
+    gl_Position = projection * view * model * newPos;
+    vertexColor = color * intensity;
+    vertexTexcoords = texcoords;
+}
+"""
+
 
 fragment_shader = """
 #version 460

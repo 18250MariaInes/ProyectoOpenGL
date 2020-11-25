@@ -36,7 +36,7 @@ fox.rotation = glm.vec3(0, -90, 0)
 
 nave = Model('space-shuttle-orbiter.obj', 'planespace.bmp')
 
-nave.position = glm.vec3(0,-30,-1000)
+nave.position = glm.vec3(0,-30,-900)
 nave.rotation = glm.vec3(0, -90, 0)
 
 tiger = Model('tiger.obj', 'tiger-atlas.bmp')
@@ -50,14 +50,17 @@ mill.rotation = glm.vec3(0, 0, 0)
 
 r.modelList.append(tiger)
 r.modelList.append(mill)
-r.modelList.append(Model('model.obj', 'model.bmp'))
+#r.modelList.append(Model('model.obj', 'model.bmp'))
 r.modelList.append(nave)
-#r.modelList.append(Model('marsRobot.obj', 'metal.bmp'))"""
 r.modelList.append(fox)
 
 #play a step sound when moving
 def play_step():
     pygame.mixer.music.load('mariostep.mp3')
+    pygame.mixer.music.play(0)
+
+def play_exp():
+    pygame.mixer.music.load('explosion.mp3')
     pygame.mixer.music.play(0)
 
 isPlaying = True
@@ -89,15 +92,13 @@ while isPlaying:
     if keys[K_4]:
         play_step()
         r.setShaders(shaders.dance_shader, shaders.siren_shader)
-    """if keys[K_5]:
-        r.setShaders(shaders.vertex_shader, shaders.wavy_shader)"""
+    if keys[K_5]:
+        play_step()
+        r.setShaders(shaders.exp_shader, shaders.siren_shader)
+    if keys[K_w]:
+        r.expl+=10
+        play_exp()
     
-    
-    """if keys[K_w]:
-        r.camPosition.z -= 1 * deltaTime
-    if keys[K_s]:
-        r.camPosition.z += 1 * deltaTime"""
-
 
     for ev in pygame.event.get():
         if ev.type == pygame.QUIT:
