@@ -12,6 +12,7 @@ import glm
 from gl import Renderer, Model
 import shaders
 
+
 deltaTime = 0.0
 
 # Inicializacion de pygame
@@ -35,24 +36,24 @@ fox.position = glm.vec3(0,-30,-120)
 fox.rotation = glm.vec3(0, -90, 0)
 
 nave = Model('space-shuttle-orbiter.obj', 'planespace.bmp')
-
-nave.position = glm.vec3(0,-30,-900)
+nave.position = glm.vec3(0,-30,-500)
 nave.rotation = glm.vec3(0, -90, 0)
+nave.scale = glm.vec3(0.5,0.5,0.5)
 
 tiger = Model('tiger.obj', 'tiger-atlas.bmp')
 tiger.position = glm.vec3(0,-30,-500)
 tiger.rotation = glm.vec3(0, -90, 0)
 
-mill = Model('ukulele.obj', 'uk.jpg')
-mill.position = glm.vec3(0,-30,-800)
-mill.rotation = glm.vec3(0, 0, 0)
+camero = Model('camero.obj','camero.png')
+camero.position = glm.vec3(0,-0.5,0)
+camero.rotation = glm.vec3(0, 90, 0)
 
 
 r.modelList.append(tiger)
-r.modelList.append(mill)
-#r.modelList.append(Model('model.obj', 'model.bmp'))
 r.modelList.append(nave)
 r.modelList.append(fox)
+r.modelList.append(camero)
+
 
 #play a step sound when moving
 def play_step():
@@ -73,12 +74,9 @@ while isPlaying:
     # Move cam
     if keys[K_RIGHT]:
         r.camPosition.x += 100 * deltaTime
-        """r.camPosition.z -= 50 * deltaTime
-        r.camRotation.y += 50 * deltaTime"""
     if keys[K_LEFT]:
         r.camPosition.x -= 100 * deltaTime
-        """r.camPosition.z -= 50 * deltaTime
-        r.camRotation.y -= 50 * deltaTime"""
+        
 
     if keys[K_1]:
         play_step()
@@ -98,6 +96,10 @@ while isPlaying:
     if keys[K_w]:
         r.expl+=10
         play_exp()
+    if keys[K_x]:
+        r.modelList[r.activeModelIndex].rotation.y += 30*deltaTime
+    if keys[K_y]:
+        r.modelList[r.activeModelIndex].rotation.x += 30*deltaTime
     
 
     for ev in pygame.event.get():
@@ -126,6 +128,8 @@ while isPlaying:
 
 
     # Main Renderer Loop
+
+    
     r.render()
 
     pygame.display.flip()
