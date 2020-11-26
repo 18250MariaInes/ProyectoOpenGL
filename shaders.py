@@ -2,7 +2,7 @@
 Maria Ines Vasquez Figueroa
 18250
 Gráficas
-RendererOpenGL 
+ProyectoOpenGL 
 Shader
 """
 
@@ -24,11 +24,15 @@ uniform vec4 light;
 out vec4 vertexColor;
 out vec2 vertexTexcoords;
 out vec4 fnormal;
+out float fintensity;
+out vec4 v3Position;
 
 void main()
 {
     float intensity = dot(model * normal, normalize(light - pos));
+    fintensity = intensity;
     fnormal=normal;
+    v3Position = pos;
     gl_Position = projection * view * model * pos;
     vertexColor = color * intensity;
     vertexTexcoords = texcoords;
@@ -55,10 +59,10 @@ out vec4 fnormal;
 
 void main()
 {
-    vec4 newPos= (pos + (model * normal) * cos(time/5))/100;
-    float intensity = dot(model * normal, normalize(light - pos));
+    vec4 newPos= (pos);
+    float intensity = dot(model * normal, normalize(light - newPos));
     fnormal=normal;
-    gl_Position = projection * view * model * newPos;
+    gl_Position = (projection * view * model * newPos)-cos(time/30)*80;
     vertexColor = color * intensity;
     vertexTexcoords = texcoords;
 }
@@ -148,6 +152,23 @@ void main()
   diffuseColor = vec4(col1 + col2);
 }
 """
+ola_shader = """
+#version 460
+layout (location = 0) out vec4 diffuseColor;
+
+precision highp float;
+in vec4 fnormal;
+in vec4 vertexColor;
+in vec2 vertexTexcoords;
+uniform float time;
+uniform sampler2D tex;
+
+void main()
+{
+ diffuseColor = mod(time, 60.0) > 30 ? vec4(1.0, 0.0, 0.0, 9.0) : vec4(1.0, 7.0, 3.0, 0.4);
+}
+
+"""
 
 #fallo total
 wavy_shader= """
@@ -170,4 +191,6 @@ void main(){
     diffuseColor = tcolor; 
 }
 """
+
+
 

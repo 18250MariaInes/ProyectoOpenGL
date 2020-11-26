@@ -2,7 +2,7 @@
 Maria Ines Vasquez Figueroa
 18250
 Gráficas
-RendererOpenGL 
+ProyectoOpenGL 
 Main
 """
 
@@ -14,6 +14,9 @@ import shaders
 
 
 deltaTime = 0.0
+roll = 0
+pitch = 0
+yaw = 0
 
 # Inicializacion de pygame
 pygame.init()
@@ -89,7 +92,7 @@ while isPlaying:
         r.setShaders(shaders.vertex_shader, shaders.fragment_shader)
     if keys[K_4]:
         play_step()
-        r.setShaders(shaders.dance_shader, shaders.siren_shader)
+        r.setShaders(shaders.dance_shader, shaders.ola_shader)
     if keys[K_5]:
         play_step()
         r.setShaders(shaders.exp_shader, shaders.siren_shader)
@@ -98,8 +101,10 @@ while isPlaying:
         play_exp()
     if keys[K_x]:
         r.modelList[r.activeModelIndex].rotation.y += 30*deltaTime
+        #yaw -= 30 * deltaTime
     if keys[K_y]:
         r.modelList[r.activeModelIndex].rotation.x += 30*deltaTime
+        #pitch -= 30 * deltaTime
     
 
     for ev in pygame.event.get():
@@ -129,7 +134,9 @@ while isPlaying:
 
     # Main Renderer Loop
 
-    
+    r.roll_camera(roll)
+    r.pitch_camera(pitch)
+    r.yaw_camera(yaw)
     r.render()
 
     pygame.display.flip()

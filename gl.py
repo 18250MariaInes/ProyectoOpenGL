@@ -2,7 +2,7 @@
 Maria Ines Vasquez Figueroa
 18250
 Gráficas
-RendererOpenGL 
+ProyectoOpenGL 
 Funciones GL
 """
 import pygame
@@ -148,6 +148,11 @@ class Renderer(object):
         self.camPosition = glm.vec3(0,0,0)
         self.camRotation = glm.vec3(0,0,0) # pitch, yaw, roll
 
+        #rotation
+        self.cam_pitch = 0
+        self.cam_yaw = 0
+        self.cam_roll = 0
+
         # Light
         self.pointLight = glm.vec4(-100,0,300,0)
 
@@ -157,17 +162,26 @@ class Renderer(object):
     def getViewMatrix(self):
         i = glm.mat4(1)
         camTranslate = glm.translate(i, self.camPosition)
-        camPitch = glm.rotate(i, glm.radians( self.camRotation.x ), glm.vec3(1,0,0))
-        camYaw   = glm.rotate(i, glm.radians( self.camRotation.y ), glm.vec3(0,1,0))
-        camRoll  = glm.rotate(i, glm.radians( self.camRotation.z ), glm.vec3(0,0,1))
-        camRotate = camPitch * camYaw * camRoll
-        return glm.inverse( camTranslate * camRotate )
+        cam_pitch = glm.rotate(i, glm.radians(self.cam_pitch), glm.vec3(1, 0, 0))
+        cam_yaw = glm.rotate(i, glm.radians(self.cam_yaw), glm.vec3(0, 1, 0))
+        cam_roll = glm.rotate(i, glm.radians(self.cam_roll), glm.vec3(0, 0, 1))
+        cam_rotate = cam_pitch * cam_yaw * cam_roll
+        return glm.inverse( camTranslate * cam_rotate )
 
     def wireframeMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
     def filledMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+
+    def roll_camera(self, x):
+        self.cam_roll = x
+
+    def pitch_camera(self, x):
+        self.cam_pitch = x
+
+    def yaw_camera(self, x):
+        self.cam_yaw = x
 
 
     def setShaders(self, vertexShader, fragShader):
