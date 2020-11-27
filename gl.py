@@ -57,6 +57,7 @@ class Model(object):
 
         self.createVertBuffer()
         
+        #textura del objeto
         self.texture_surface = pygame.image.load(textureName)
         self.texture_data = pygame.image.tostring(self.texture_surface,"RGB",1)
         self.texture = glGenTextures(1)
@@ -67,6 +68,7 @@ class Model(object):
 
     def getMatrix(self):
         i = glm.mat4(1)
+        #View Matrix del objeto para rotarlo
         translate = glm.translate(i, self.position)
         pitch = glm.rotate(i, glm.radians( self.rotation.x ), glm.vec3(1,0,0))
         yaw   = glm.rotate(i, glm.radians( self.rotation.y ), glm.vec3(0,1,0))
@@ -77,7 +79,7 @@ class Model(object):
 
     def createVertBuffer(self):
         buffer = []
-
+        #creacion del buffer del objeto, coneccion de vertices, caras, normales del objeto
         for face in self.model.faces:
             for i in range(3):
                 #verts
@@ -145,7 +147,7 @@ class Renderer(object):
         self.activeModelIndex=0
 
         # View Matrix
-        self.camPosition = glm.vec3(0,0,0)
+        self.camPosition = glm.vec3(0,0,-250)
         self.camRotation = glm.vec3(0,0,0) # pitch, yaw, roll
 
         #rotation
@@ -156,10 +158,12 @@ class Renderer(object):
         # Light
         self.pointLight = glm.vec4(-100,0,300,0)
 
-        # Perspective Projection Matrix
+        # Matriz de perspectiva/proyeccion
         self.projection = glm.perspective(glm.radians(60), self.width / self.height, 0.1, 1000)
 
     def getViewMatrix(self):
+        # View Matrix
+        # glm.lookAt( eye, center, up)
         i = glm.mat4(1)
         camTranslate = glm.translate(i, self.camPosition)
         cam_pitch = glm.rotate(i, glm.radians(self.cam_pitch), glm.vec3(1, 0, 0))
@@ -168,22 +172,32 @@ class Renderer(object):
         cam_rotate = cam_pitch * cam_yaw * cam_roll
         return glm.inverse( camTranslate * cam_rotate )
 
+    #solo dibujar el esqueleto del objeto
     def wireframeMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
+    #llenar el objeto cargado
     def filledMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+    #movimiento de roll para la camara
     def roll_camera(self, x):
         self.cam_roll = x
 
+    #movimiento de pitch para la camara
     def pitch_camera(self, x):
         self.cam_pitch = x
 
+    #movimiento de roll para la camara
     def yaw_camera(self, x):
         self.cam_yaw = x
+    
+    #funcion para mover la camara
+    def translate_camera(self, x, y, z):
+        self.camPosition = glm.vec3(x, y, z)
 
 
+    #establecer shaders desarrollados en los modelos
     def setShaders(self, vertexShader, fragShader):
 
         if vertexShader is not None or fragShader is not None:
@@ -194,7 +208,7 @@ class Renderer(object):
 
         glUseProgram(self.active_shader)
 
-
+    #funcion para renderizar escena con camara
     def render(self):
 
         glClearColor(0.2, 0.2, 0.2, 1)

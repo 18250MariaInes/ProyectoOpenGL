@@ -38,7 +38,7 @@ void main()
     vertexTexcoords = texcoords;
 }
 """
-
+#efecto catapulta
 dance_shader = """
 #version 460
 layout (location = 0) in vec4 pos;
@@ -67,7 +67,7 @@ void main()
     vertexTexcoords = texcoords;
 }
 """
-
+#recibe input del usuario para explotar objeto
 exp_shader = """
 #version 460
 layout (location = 0) in vec4 pos;
@@ -112,7 +112,7 @@ void main()
     diffuseColor =  vertexColor * texture(tex, vertexTexcoords);
 }
 """
-
+#colores en base a la normal del objeto
 rainbow_shader = """
 #version 460
 layout (location = 0) out vec4 diffuseColor;
@@ -128,7 +128,7 @@ void main()
   diffuseColor = vec4(fnormal);
 }
 """
-
+#shader de efecto de luz de policia
 siren_shader = """
 #version 460
 layout (location = 0) out vec4 diffuseColor;
@@ -152,6 +152,7 @@ void main()
   diffuseColor = vec4(col1 + col2);
 }
 """
+#cambio de colores de rojo a blanco
 ola_shader = """
 #version 460
 layout (location = 0) out vec4 diffuseColor;

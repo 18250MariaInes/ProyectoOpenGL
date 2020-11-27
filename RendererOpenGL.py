@@ -11,12 +11,19 @@ from pygame.locals import *
 import glm
 from gl import Renderer, Model
 import shaders
-
+from math import sqrt, sin, cos, tan, radians
 
 deltaTime = 0.0
+cubeX = 0
+cubeY = 0
+cubeZ = 0
 roll = 0
 pitch = 0
 yaw = 0
+distance = 0
+
+changeY=False
+changeX=False
 
 # Inicializacion de pygame
 pygame.init()
@@ -48,8 +55,8 @@ tiger.position = glm.vec3(0,-30,-500)
 tiger.rotation = glm.vec3(0, -90, 0)
 
 camero = Model('camero.obj','camero.png')
-camero.position = glm.vec3(0,-0.5,0)
-camero.rotation = glm.vec3(0, 90, 0)
+camero.position = glm.vec3(0,-0.5,-3)
+camero.rotation = glm.vec3(0, -90, 0)
 
 
 r.modelList.append(tiger)
@@ -69,8 +76,6 @@ def play_exp():
 
 isPlaying = True
 while isPlaying:
-
-
     # Para revisar si una tecla esta presionada
     keys = pygame.key.get_pressed()
 
@@ -100,11 +105,42 @@ while isPlaying:
         r.expl+=10
         play_exp()
     if keys[K_x]:
-        r.modelList[r.activeModelIndex].rotation.y += 30*deltaTime
+        if (changeY):
+            cubeX = 0
+            cubeY = 0
+            cubeZ = 0
+            roll = 0
+            pitch = 0
+            yaw = 0
+            changeY=False
+        #yaw = 30 * deltaTime #plan b
+        yaw += 90*deltaTime % 360
+        cube_pos = r.modelList[r.activeModelIndex].position
+        cam_pos = r.camPosition
+        print(cube_pos.z)
+        cubeX = sin(radians(yaw))*abs(cube_pos.z)
+        cubeZ = cos(radians(yaw))*abs(cube_pos.z) - abs(cube_pos.z) #(cam_pos.z-cube_pos.z)
+        changeX=True
+        #r.modelList[r.activeModelIndex].rotation.y += yaw #plan b
         #yaw -= 30 * deltaTime
     if keys[K_y]:
-        r.modelList[r.activeModelIndex].rotation.x += 30*deltaTime
+        #pitch = 30 * deltaTime 
+        if (changeX):
+            cubeX = 0
+            cubeY = 0
+            cubeZ = 0
+            roll = 0
+            pitch = 0
+            yaw = 0
+            changeX=False
+        pitch += 90*deltaTime % 360
+        cube_pos = r.modelList[r.activeModelIndex].position
+        #cam_pos = r.camPosition
+        cubeY = -sin(radians(pitch))*abs(cube_pos.z)
+        cubeZ = cos(radians(pitch))*abs(cube_pos.z) - abs(cube_pos.z)
+        #r.modelList[r.activeModelIndex].rotation.x += pitch
         #pitch -= 30 * deltaTime
+        changeY=True
     
 
     for ev in pygame.event.get():
@@ -119,21 +155,59 @@ while isPlaying:
             elif ev.key == pygame.K_ESCAPE:
                 isPlaying = False
             elif ev.key == pygame.K_SPACE:
+                r.expl=0
+                cubeX = 0
+                cubeY = 0
+                cubeZ = 0
+                roll = 0
+                pitch = 0
+                yaw = 0
                 r.activeModelIndex = (r.activeModelIndex+1) % len( r.modelList )
         
         if ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
             if ev.button == 4:
+                """print(r.camPosition)
                 if r.camPosition.z>=-44:
-                    r.camPosition.z -= 100 * deltaTime
+                    r.camPosition.z -= 1000 * deltaTime"""
+                if (changeY):
+                    cubeX = 0
+                    cubeY = 0
+                    cubeZ = 0
+                    roll = 0
+                    pitch = 0
+                    yaw = 0
+                    changeY=False
+                #yaw = 30 * deltaTime #plan b
+                yaw += 90*deltaTime % 360
+                cube_pos = r.modelList[r.activeModelIndex].position
+                cam_pos = r.camPosition
+                cubeX = sin(radians(yaw))*abs(cube_pos.z)
+                cubeZ = cos(radians(yaw))*abs(cube_pos.z) - abs(cube_pos.z) #(cam_pos.z-cube_pos.z)
+                changeX=True
                #print(r.camPosition.z)
             if ev.button == 5:
-                if r.camPosition.z<=44:
-                    r.camPosition.z += 100 * deltaTime
+                """if r.camPosition.z<=44:
+                    r.camPosition.z += 1000 * deltaTime"""
+                if (changeX):
+                    cubeX = 0
+                    cubeY = 0
+                    cubeZ = 0
+                    roll = 0
+                    pitch = 0
+                    yaw = 0
+                    changeX=False
+                pitch += 90*deltaTime % 360
+                cube_pos = r.modelList[r.activeModelIndex].position
+                #cam_pos = r.camPosition
+                cubeY = -sin(radians(pitch))*abs(cube_pos.z)
+                cubeZ = cos(radians(pitch))*abs(cube_pos.z) - abs(cube_pos.z)
+                #r.modelList[r.activeModelIndex].rotation.x += pitch
+                #pitch -= 30 * deltaTime
+                changeY=True
                #print(r.camPosition.z)
 
-
     # Main Renderer Loop
-
+    r.translate_camera(cubeX, cubeY, cubeZ)
     r.roll_camera(roll)
     r.pitch_camera(pitch)
     r.yaw_camera(yaw)
